@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #444;
+            margin-top: 30px;
+        }
+
+        .message-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .message-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .message-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .messages {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .messages li {
+            padding: 10px;
+            background: #f1f1f1;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .messages li strong {
+            color: #007bff;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+            .container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat App</h1>
+        <form class="message-form" action="">
+            <input type="text" id="usernameInput" placeholder="Enter your username" disabled>
+            <input type="text" id="messageInput" placeholder="Enter your message">
+            <button type="submit">Send message</button>
+        </form>
+
+        <h2>Messages</h2>
+        <ul class="messages"></ul>
+    </div>
+
+    <script type="module">
+        import { io } from "https://cdn.socket.io/4.8.1/socket.io.esm.min.js";
+
+        const socket = io('http://localhost:3000')
+
+        const messageForm = document.querySelector('.message-form')
+        messageForm.addEventListener('submit', (e) => {
+            e.preventDefault()
+            const usernameInput = messageForm.querySelector('#usernameInput').value.trim()
+            const messageInput = messageForm.querySelector('#messageInput')
+            socket.emit('chat', { username: usernameInput, message: messageInput.value.trim() })
+            messageInput.value = ''
+        })
+
+        socket.on('chat', (data) => {
+            const messages = document.querySelector('.messages')
+            const li = document.createElement('li')
+            li.innerHTML = `<strong>${data.username}:</strong> ${data.message}`
+            messages.appendChild(li)
+        })
+
+        fetch('http://localhost:3000/users/me', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.username) {
+                    document.querySelector('#usernameInput').value = data.username
+                }
+            })
+            .catch(() => alert('Please log in first'));
+    </script>
+</body>
+</html>

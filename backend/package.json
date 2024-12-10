@@ -1,0 +1,32 @@
+{
+  "name": "nodejs-final-project-jorgefc",
+  "version": "1.0.0",
+  "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/xtD9RX5m)\r # NodeJS - Final Project (Full-Stack Application)",
+  "main": "dist/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon dist/server.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cookie-session": "^2.0.49",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
+    "@types/socket.io": "^3.0.1",
+    "@types/uuid": "^10.0.0"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "concurrently": "^9.1.0",
+    "cookie-parser": "^1.4.7",
+    "cookie-session": "^2.1.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.3"
+  }
+}

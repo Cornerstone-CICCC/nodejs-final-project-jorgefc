@@ -1,0 +1,187 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .login, .signup {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .login.visible, .signup.visible {
+            display: block;
+        }
+
+        .login h2, .signup h2 {
+            margin-bottom: 20px;
+            color: #444;
+            font-size: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input::placeholder {
+            color: #888;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .btnDisplayRegister {
+            background: none;
+            color: #007bff;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: color 0.3s;
+        }
+
+        .btnDisplayRegister:hover {
+            color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 1rem;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+            .login, .signup {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Private Chat, Please log in</h1>
+
+    <form class="login visible">
+        <h2>Login</h2>
+        <input type="text" name="username" autocomplete="off" placeholder="👤Enter username">
+        <input type="password" name="password" placeholder="🔐 Enter password">
+        <button type="submit">Log In</button>
+        <p class="error"></p>
+    </form>
+
+    <button class="btnDisplayRegister" id="showReg">Register an Account</button>
+
+    <form class="signup">
+        <h2>Create Account</h2>
+        <input type="text" name="username" autocomplete="off" placeholder="👤 Enter username">
+        <input type="password" name="password" placeholder="🔐 Enter password">
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <script>
+        const loginForm = document.querySelector('.login');
+        const signupForm = document.querySelector('.signup');
+        const loginError = loginForm.querySelector('.error');
+        const btnDisplayRegister = document.querySelector('.btnDisplayRegister');
+
+        btnDisplayRegister?.addEventListener('click', () => {
+            signupForm.classList.toggle('visible');
+            loginForm.classList.toggle('visible');
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            loginError.textContent = " ";
+            e.preventDefault();
+
+            const formData = new FormData(loginForm);
+            const res = await fetch(`http://localhost:3000/users/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    username: formData.get('username'),
+                    password: formData.get('password')
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                window.location.href = "/chat";
+            } else {
+                loginError.textContent = "Login Failed";
+            }
+        });
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(signupForm);
+
+            const res = await fetch(`http://localhost:3000/users/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    username: formData.get('username'),
+                    password: formData.get('password')
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert("User was created successfully");
+				loginForm.classList.toggle('visible');
+            } else {
+                alert("Either the user exists or was not created");
+            }
+        });
+    </script>
+</body>
+</html>
